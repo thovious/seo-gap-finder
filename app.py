@@ -16,6 +16,7 @@ REQUIREMENTS (put these lines into a requirements.txt file if desired):
 streamlit
 requests
 beautifulsoup4
+lxml
 tldextract
 python-slugify
 
@@ -31,6 +32,7 @@ import re
 import io
 import time
 from urllib.parse import urljoin, urlparse
+import gzip
 
 import requests
 from bs4 import BeautifulSoup
@@ -70,7 +72,7 @@ def read_sitemap_xml(base_url: str):
         resp = fetch(url)
         if not resp or resp.status_code != 200 or "xml" not in resp.headers.get("Content-Type", ""):
             return
-        soup = BeautifulSoup(resp.text, "xml")
+        soup = BeautifulSoup(resp.text, "lxml-xml")
         # If it's a sitemap index
         for loc in soup.find_all("sitemap"):
             loc_url = loc.find("loc")
@@ -399,4 +401,3 @@ if submitted:
 
 st.markdown("---")
 st.caption("MVP limitations: Lightweight crawl (bypasses JS-heavy sites), heuristic matching, no auth-only areas. For robust enterprise crawling, upgrade to a headless browser + queue + retry strategy.")
-
